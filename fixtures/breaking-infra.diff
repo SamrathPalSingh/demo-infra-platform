@@ -1,0 +1,16 @@
+diff --git a/infra/network-state.yaml b/infra/network-state.yaml
+index 4f51231..c0315cc 100644
+--- a/infra/network-state.yaml
++++ b/infra/network-state.yaml
+@@ -5,9 +5,7 @@ metadata:
+ spec:
+   nat:
+-    allocation_method: static
+-    addresses:
+-      - 34.120.10.10
+-      - 34.120.10.11
++    allocation_method: ephemeral
+   ingress:
+     class: public-nginx
+     address: 34.98.20.5
+

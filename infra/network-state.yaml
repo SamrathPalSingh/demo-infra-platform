@@ -1,0 +1,15 @@
+apiVersion: demo.contracts/v1
+kind: NetworkState
+metadata:
+  name: shared-egress-and-ingress
+spec:
+  nat:
+    allocation_method: static
+    addresses:
+      - 34.120.10.10
+      - 34.120.10.11
+  ingress:
+    class: public-nginx
+    address: 34.98.20.5
+    tls: enabled
+

@@ -1,0 +1,62 @@
+name: Check service contracts
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "infra/**"
+      - "terraform/**"
+      - "platform-invariants.md"
+      - "platform-contract.json"
+      - "scripts/contract-check.mjs"
+      - ".github/workflows/contract-check.yml"
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+concurrency:
+  group: infra-contract-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Verify infra change against all service contracts
+        id: contract
+        continue-on-error: true
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          DIRECTION: infra-to-service
+          CONTRACT_ENGINE: gemini
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.5-flash' }}
+          REGISTRY_REPO: ${{ vars.CONTRACT_REGISTRY_REPO || format('{0}/demo-contract-registry', github.repository_owner) }}
+          REGISTRY_REF: ${{ vars.CONTRACT_REGISTRY_REF || 'main' }}
+          REGISTRY_TOKEN: ${{ secrets.REGISTRY_READ_TOKEN || github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/contract-check.mjs
+
+      - name: Upload machine-readable verdict
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: infra-app-contract-verdict
+          path: .contract-report.json
+          if-no-files-found: ignore
+
+      - name: Enforce verdict
+        if: steps.contract.outcome == 'failure'
+        run: exit 1

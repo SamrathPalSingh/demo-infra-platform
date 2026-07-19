@@ -1,0 +1,14 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-ssd
+  annotations:
+    contract.demo/provisioned-iops: "3000"
+provisioner: pd.csi.storage.gke.io
+parameters:
+  type: pd-ssd
+  iops: "3000"
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer
+

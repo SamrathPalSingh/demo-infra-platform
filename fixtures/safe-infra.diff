@@ -1,0 +1,10 @@
+diff --git a/infra/storage-class.yaml b/infra/storage-class.yaml
+index 51b68ee..602c2bb 100644
+--- a/infra/storage-class.yaml
++++ b/infra/storage-class.yaml
+@@ -10,5 +10,6 @@ parameters:
+   type: pd-ssd
+   iops: "3000"
++  replication: regional
+ reclaimPolicy: Retain
+

@@ -1,0 +1,14 @@
+{
+  "name": "demo-infra-platform",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "demo:safe": "node scripts/contract-check.mjs --direction infra-to-service --diff fixtures/safe-infra.diff --registry-dir ../demo-contract-registry --engine deterministic --dry-run",
+    "demo:breaking": "node scripts/contract-check.mjs --direction infra-to-service --diff fixtures/breaking-infra.diff --registry-dir ../demo-contract-registry --engine deterministic --dry-run"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
