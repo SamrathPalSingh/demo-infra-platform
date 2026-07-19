@@ -8,7 +8,8 @@ on:
       - "terraform/**"
       - "platform-invariants.md"
       - "platform-contract.json"
-      - "scripts/contract-check.mjs"
+      - "cmd/contract-check/**"
+      - "go.mod"
       - ".github/workflows/contract-check.yml"
 
 permissions:
@@ -30,9 +31,10 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-go@v6
         with:
-          node-version: 24
+          go-version: '1.26.x'
+          cache: false
 
       - name: Verify infra change against all service contracts
         id: contract
@@ -47,7 +49,7 @@ jobs:
           REGISTRY_REF: ${{ vars.CONTRACT_REGISTRY_REF || 'main' }}
           REGISTRY_TOKEN: ${{ secrets.REGISTRY_READ_TOKEN || github.token }}
           GITHUB_TOKEN: ${{ github.token }}
-        run: node scripts/contract-check.mjs
+        run: go run ./cmd/contract-check
 
       - name: Upload machine-readable verdict
         if: always()

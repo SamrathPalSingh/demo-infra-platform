@@ -8,7 +8,8 @@ on:
       - "platform-contract.json"
       - "infra/**"
       - "terraform/**"
-      - "scripts/publish-contract.mjs"
+      - "cmd/publish-contract/**"
+      - "go.mod"
   workflow_dispatch:
 
 permissions:
@@ -19,12 +20,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-go@v6
         with:
-          node-version: 24
+          go-version: '1.26.x'
+          cache: false
       - name: Publish versioned platform contract
         env:
           REGISTRY_REPO: ${{ vars.CONTRACT_REGISTRY_REPO || format('{0}/demo-contract-registry', github.repository_owner) }}
           REGISTRY_BRANCH: ${{ vars.CONTRACT_REGISTRY_REF || 'main' }}
           REGISTRY_WRITE_TOKEN: ${{ secrets.REGISTRY_WRITE_TOKEN }}
-        run: node scripts/publish-contract.mjs
+        run: go run ./cmd/publish-contract --kind platform

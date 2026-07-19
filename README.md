@@ -6,7 +6,7 @@ A realistic but non-deploying infrastructure repository for the Infra-App Contra
 
 ```text
 infra PR diff ──┐
-                ├── contract-check.mjs ── Gemini ── PR comment + required check
+                ├── Go contract-check ── Gemini ── PR comment + required check
 registry repo ──┘                            │
                     affected owners ◀───────┘
 ```
@@ -46,12 +46,12 @@ The workflow uses `pull_request_target` but checks out only the trusted base com
 
 ## Local verification without API spend
 
-Node.js 24+ is the only dependency:
+Go is the only language toolchain. The commands use only the standard library, so there are no modules to download:
 
 ```bash
-npm test
-npm run demo:safe
-npm run demo:breaking
+go test ./...
+go run ./cmd/contract-check --direction infra-to-service --diff fixtures/safe-infra.diff --registry-dir ../demo-contract-registry --engine deterministic --dry-run
+go run ./cmd/contract-check --direction infra-to-service --diff fixtures/breaking-infra.diff --registry-dir ../demo-contract-registry --engine deterministic --dry-run
 ```
 
 `demo:breaking` is expected to exit with status 1 and name the search and checkout owners. The deterministic engine exists only for repeatable fixtures and local development; `.github/workflows/contract-check.yml` explicitly selects Gemini.
@@ -60,7 +60,7 @@ To exercise Gemini locally:
 
 ```bash
 export GEMINI_API_KEY="your-key"
-node scripts/contract-check.mjs \
+go run ./cmd/contract-check \
   --direction infra-to-service \
   --diff fixtures/breaking-infra.diff \
   --registry-dir ../demo-contract-registry \
@@ -72,7 +72,7 @@ PowerShell equivalent:
 
 ```powershell
 $env:GEMINI_API_KEY = "your-key"
-node scripts/contract-check.mjs --direction infra-to-service --diff fixtures/breaking-infra.diff --registry-dir ../demo-contract-registry --engine gemini --dry-run
+go run ./cmd/contract-check --direction infra-to-service --diff fixtures/breaking-infra.diff --registry-dir ../demo-contract-registry --engine gemini --dry-run
 ```
 
 Never commit the API key. Gemini structured outputs are schema-constrained, but the script also performs semantic consistency checks before trusting the verdict.
