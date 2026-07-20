@@ -58,6 +58,7 @@ jobs:
           name: infra-app-contract-verdict
           path: .contract-report.json
           if-no-files-found: ignore
+          include-hidden-files: true
 
       - name: Enforce verdict
         if: steps.contract.outcome == 'failure'
