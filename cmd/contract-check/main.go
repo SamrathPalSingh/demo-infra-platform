@@ -363,7 +363,7 @@ func callGemini(prompt, apiKey, model string) (verdict, error) {
 	}
 	payload := map[string]any{
 		"contents":         []any{map[string]any{"role": "user", "parts": []any{map[string]any{"text": prompt}}}},
-		"generationConfig": map[string]any{"temperature": 0.1, "maxOutputTokens": 4096, "responseFormat": map[string]any{"text": map[string]any{"mimeType": "APPLICATION_JSON", "schema": schema}}},
+		"generationConfig": map[string]any{"temperature": 0.1, "maxOutputTokens": 4096, "responseMimeType": "application/json", "responseJsonSchema": schema},
 	}
 	body, _ := json.Marshal(payload)
 	endpoint := "https://generativelanguage.googleapis.com/v1beta/models/" + url.PathEscape(model) + ":generateContent"
