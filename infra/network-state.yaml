@@ -2,6 +2,7 @@ apiVersion: demo.contracts/v1
 kind: NetworkState
 metadata:
   name: shared-egress-and-ingress
+  # This shared network state is intentionally stable for the contract-check demo.
 spec:
   nat:
     allocation_method: static
@@ -12,4 +13,3 @@ spec:
     class: public-nginx
     address: 34.98.20.5
     tls: enabled
-
