@@ -1,0 +1,9 @@
+apiVersion: demo.contracts/v1
+kind: ClusterSecurityDefaults
+metadata:
+  name: workload-confinement
+spec:
+  # The POC baseline is deliberately unconfined. The demo breaking PR flips
+  # these values to true, which must be evaluated in every service repository.
+  seccomp_default: false
+  apparmor_default: false

@@ -7,8 +7,7 @@ on:
       - "infra/**"
       - "terraform/**"
       - "platform-invariants.md"
-      - "platform-contract.json"
-      - "cmd/contract-check/**"
+      - "cmd/fanout-contract-test/**"
       - "go.mod"
       - ".github/workflows/contract-check.yml"
 
@@ -36,20 +35,18 @@ jobs:
           go-version: '1.26.x'
           cache: false
 
-      - name: Verify infra change against all service contracts
+      - name: Dispatch checks to every service and aggregate their results
         id: contract
         continue-on-error: true
         env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          DIRECTION: infra-to-service
-          CONTRACT_ENGINE: gemini
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.5-flash' }}
           REGISTRY_REPO: ${{ vars.CONTRACT_REGISTRY_REPO || format('{0}/demo-contract-registry', github.repository_owner) }}
           REGISTRY_REF: ${{ vars.CONTRACT_REGISTRY_REF || 'main' }}
-          REGISTRY_TOKEN: ${{ secrets.REGISTRY_READ_TOKEN || github.token }}
+          REGISTRY_TOKEN: ${{ secrets.CONTRACT_FANOUT_TOKEN }}
+          FANOUT_TOKEN: ${{ secrets.CONTRACT_FANOUT_TOKEN }}
+          FANOUT_TIMEOUT_SECONDS: ${{ vars.FANOUT_TIMEOUT_SECONDS || '600' }}
+          FANOUT_POLL_SECONDS: ${{ vars.FANOUT_POLL_SECONDS || '10' }}
           GITHUB_TOKEN: ${{ github.token }}
-        run: go run ./cmd/contract-check
+        run: go run ./cmd/fanout-contract-test
 
       - name: Upload machine-readable verdict
         if: always()

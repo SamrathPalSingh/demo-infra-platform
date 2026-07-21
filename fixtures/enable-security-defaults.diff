@@ -1,0 +1,10 @@
+diff --git a/infra/cluster-security-defaults.yaml b/infra/cluster-security-defaults.yaml
+index 1111111..2222222 100644
+--- a/infra/cluster-security-defaults.yaml
++++ b/infra/cluster-security-defaults.yaml
+@@ -5,5 +5,5 @@ metadata:
+ spec:
+-  seccomp_default: false
+-  apparmor_default: false
++  seccomp_default: true
++  apparmor_default: true
